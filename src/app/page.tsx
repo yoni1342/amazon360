@@ -2,7 +2,7 @@
 
 import { useState, useRef, FormEvent } from "react";
 import Image from "next/image";
-import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
+import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
@@ -26,32 +26,32 @@ export default function Home() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const knowledgeBasesOptions = [
     { value: "marketing", label: "Marketing Knowledge Base" },
     { value: "sales", label: "Sales Knowledge Base" },
-    { value: "general", label: "Knowledge Base" }
+    { value: "general", label: "Knowledge Base" },
   ];
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
-    
+
     // Validation
     if (!formData.knowledgeBase) {
       setError("Please select a knowledge base");
       return;
     }
-    
+
     if (!formData.text && formData.files.length === 0) {
       setError("Please provide either text or upload files");
       return;
     }
 
     setIsSubmitting(true);
-    
+
     try {
       const submitData = new FormData();
       submitData.append("knowledgeBase", formData.knowledgeBase);
@@ -59,13 +59,16 @@ export default function Home() {
       formData.files.forEach((file) => submitData.append("files", file));
 
       // Send data to the specified webhook URL
-      const response = await fetch("https://amazon360.app.n8n.cloud/webhook-test/bcd2a5cd-0e26-487d-9372-0009be630470", {
-        method: "POST",
-        body: submitData,
-      });
+      const response = await fetch(
+        "https://amazon360.app.n8n.cloud/webhook-test/bcd2a5cd-0e26-487d-9372-0009be630470",
+        {
+          method: "POST",
+          body: submitData,
+        }
+      );
 
       if (!response.ok) throw new Error("Failed to submit");
-      
+
       // Reset form
       setFormData({
         knowledgeBase: "",
@@ -73,7 +76,6 @@ export default function Home() {
         files: [],
       });
       if (fileInputRef.current) fileInputRef.current.value = "";
-      
     } catch (err) {
       setError("Failed to submit. Please try again.");
     } finally {
@@ -86,17 +88,22 @@ export default function Home() {
       <div className="max-w-2xl mx-auto">
         <div className="bg-white p-8 rounded-lg shadow">
           <h1 className="text-2xl font-bold mb-6">Knowledge Base Upload</h1>
-          
+
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Knowledge Base Selection */}
             <div className="relative">
-              <label htmlFor="knowledgeBase" className="block text-sm font-medium text-gray-700 mb-1">
+              <label
+                htmlFor="knowledgeBase"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
                 Knowledge Base *
               </label>
               <Dropdown
                 id="knowledgeBase"
                 value={formData.knowledgeBase}
-                onChange={(e: DropdownChangeEvent) => setFormData({ ...formData, knowledgeBase: e.value })}
+                onChange={(e: DropdownChangeEvent) =>
+                  setFormData({ ...formData, knowledgeBase: e.value })
+                }
                 options={knowledgeBasesOptions}
                 optionLabel="label"
                 optionValue="value"
@@ -115,13 +122,18 @@ export default function Home() {
 
             {/* Text Input */}
             <div>
-              <label htmlFor="text" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="text"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Text
               </label>
               <textarea
                 id="text"
                 value={formData.text}
-                onChange={(e) => setFormData({ ...formData, text: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, text: e.target.value })
+                }
                 rows={4}
                 className="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm py-2 px-3 
                   focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent
@@ -132,7 +144,10 @@ export default function Home() {
 
             {/* File Upload */}
             <div>
-              <label htmlFor="files" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="files"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Upload Files or Images
               </label>
               <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-indigo-300 transition-colors duration-200">
@@ -161,7 +176,15 @@ export default function Home() {
                         id="files"
                         type="file"
                         ref={fileInputRef}
-                        onChange={(e) => setFormData({ ...formData, files: Array.from(e.target.files || []) })}
+                        onChange={(e) => {
+                          const newFiles = Array.from(e.target.files || []);
+                          setFormData({
+                            ...formData,
+                            files: [...formData.files, ...newFiles],
+                          });
+                          if (fileInputRef.current)
+                            fileInputRef.current.value = "";
+                        }}
                         multiple
                         className="sr-only"
                         accept="image/*,.pdf,.doc,.docx,.txt"
@@ -169,16 +192,38 @@ export default function Home() {
                     </label>
                     <p className="pl-1">or drag and drop</p>
                   </div>
-                  <p className="text-xs text-gray-500">Images, PDFs, DOC, DOCX, TXT up to 10MB each</p>
+                  <p className="text-xs text-gray-500">
+                    Images, PDFs, DOC, DOCX, TXT up to 10MB each
+                  </p>
                 </div>
               </div>
               {formData.files.length > 0 && (
                 <div className="mt-2">
-                  <h4 className="text-sm font-medium text-gray-700">Selected files:</h4>
+                  <h4 className="text-sm font-medium text-gray-700">
+                    Selected files:
+                  </h4>
                   <ul className="mt-1 text-sm text-gray-500">
                     {Array.from(formData.files).map((file, index) => (
-                      <li key={index} className="truncate">
-                        {file.name} ({(file.size / 1024 / 1024).toFixed(2)} MB)
+                      <li
+                        key={index}
+                        className="flex justify-between items-center py-1"
+                      >
+                        <span className="truncate">
+                          {file.name} ({(file.size / 1024 / 1024).toFixed(2)}{" "}
+                          MB)
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const newFiles = formData.files.filter(
+                              (_, i) => i !== index
+                            );
+                            setFormData({ ...formData, files: newFiles });
+                          }}
+                          className="ml-2 px-2 text-red-500 hover:text-red-700 focus:outline-none"
+                        >
+                          ×
+                        </button>
                       </li>
                     ))}
                   </ul>
@@ -186,9 +231,7 @@ export default function Home() {
               )}
             </div>
 
-            {error && (
-              <div className="text-red-600 text-sm">{error}</div>
-            )}
+            {error && <div className="text-red-600 text-sm">{error}</div>}
 
             <button
               type="submit"

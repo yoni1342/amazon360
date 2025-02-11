@@ -187,13 +187,13 @@ export default function Home() {
                         }}
                         multiple
                         className="sr-only"
-                        accept="image/*,.pdf,.doc,.docx,.txt"
+                        accept="image/*,.pdf,.doc,.docx,.txt,video/*"
                       />
                     </label>
                     <p className="pl-1">or drag and drop</p>
                   </div>
                   <p className="text-xs text-gray-500">
-                    Images, PDFs, DOC, DOCX, TXT up to 10MB each
+                    Images, Videos, PDFs, DOC, DOCX, TXT up to 10MB each
                   </p>
                 </div>
               </div>

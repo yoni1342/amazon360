@@ -33,6 +33,7 @@ export default function Home() {
     { value: "marketing", label: "Marketing Knowledge Base" },
     { value: "sales", label: "Sales Knowledge Base" },
     { value: "general", label: "Knowledge Base" },
+    { value: "amazon", label: "Amazon Knowledge Base" },
   ];
 
   const handleSubmit = async (e: FormEvent) => {

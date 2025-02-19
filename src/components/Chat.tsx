@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import DOMPurify from "dompurify";
+import ReactMarkdown from "react-markdown";
 
 interface Message {
   text: string;
@@ -63,13 +64,16 @@ export default function Chat({ sessionId }: { sessionId: string }) {
     setIsLoading(true);
     setMessages((prev) => [
       ...prev,
-      { text: inputMessage, isUser: true, isHtml: true },
+      { text: inputMessage, isUser: true },
     ]);
     setInputMessage("");
 
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 600000); // 10 minutes timeout
+
       const response = await fetch(
-        "https://amazon360.app.n8n.cloud/webhook/1eedf427-c381-45fb-9c10-5a7206707968/chat",
+        "https://amazon360.app.n8n.cloud/webhook/a8123cc8-ac48-4fd4-b133-3a09deff4795/chat",
         {
           method: "POST",
           headers: {
@@ -80,8 +84,12 @@ export default function Chat({ sessionId }: { sessionId: string }) {
             sessionId: sessionId,
             action: "sendMessage",
           }),
+          signal: controller.signal,
+          keepalive: true // Add keepalive option
         }
       );
+
+      clearTimeout(timeoutId); // Clear the timeout if the request completes
 
       if (!response.ok) {
         console.error("Server error:", response.status, await response.text());
@@ -132,11 +140,17 @@ export default function Chat({ sessionId }: { sessionId: string }) {
                 message.isUser ? "bg-blue-500 text-white" : "bg-gray-100"
               }`}
             >
-              <div
-                dangerouslySetInnerHTML={{
-                  __html: DOMPurify.sanitize(message.text),
-                }}
-              />
+              {message.isUser ? (
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(message.text),
+                  }}
+                />
+              ) : (
+                <ReactMarkdown className="prose prose-base max-w-none">
+                  {message.text}
+                </ReactMarkdown>
+              )}
             </div>
           </div>
         ))}

@@ -65,7 +65,7 @@ export default function Home() {
 
       // Send data to the specified webhook URL
       const response = await fetch(
-        "https://n8n.gradientlogic.ai/webhook/bcd2a5cd-0e26-487d-9372-0009be630470",
+        "https://amazon360.app.n8n.cloud/webhook/bcd2a5cd-0e26-487d-9372-0009be630470",
         {
           method: "POST",
           body: submitData,

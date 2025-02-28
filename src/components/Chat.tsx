@@ -73,7 +73,7 @@ export default function Chat({ sessionId }: { sessionId: string }) {
       const timeoutId = setTimeout(() => controller.abort(), 600000); // 10 minutes timeout
 
       const response = await fetch(
-        "https://n8n.gradientlogic.ai/webhook/a8123cc8-ac48-4fd4-b133-3a09deff4795/chat",
+        "https://amazon360.app.n8n.cloud/webhook/a8123cc8-ac48-4fd4-b133-3a09deff4795/chat",
         {
           method: "POST",
           headers: {
